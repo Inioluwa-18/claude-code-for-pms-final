@@ -23,7 +23,10 @@ prompt library built from your own questions.
 ---
 
 ### 1.
+What's contradictory or missing, not just in the company documents, but across Rook's wiki, its database, and the files in my repo?
 
 ### 2.
+What are the top most painpoints from customer's complaints in the order of priority?
 
 ### 3.
+Based on what we found, propose a fix plan for Dispatch: what to change or roll back in the code, how to win responders back, and what we’d tell them. Then define a weekly health check that reads the pings table and new tickets automatically and flags this kind of problem early, with the metrics, the thresholds, and who on the team owns each one. Draft it so it could run as a scheduled task.

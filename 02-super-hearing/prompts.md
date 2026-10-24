@@ -15,7 +15,13 @@ prompt library built from your own questions.
 ---
 
 ### 1.
+Make this as simple as possible like you are explaining to an eight year old. Use a clear, easy to understand diagram where needed
 
 ### 2.
+You've now read both piles. Where do they disagree? What's loud in the interviews but rare in the tickets, and what's all over the tickets that nobody brought up in the interviews?
 
 ### 3.
+What was resolved and what was unresolved?
+
+### 4.
+If I'd only read the interviews, what would I have got wrong?
