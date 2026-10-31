@@ -16,7 +16,14 @@ prompt library built from your own questions.
 ---
 
 ### 1.
+Give me a visual that breaks this down in a simple way like you are explaining to an eight year old
 
 ### 2.
+SO how can this be resolved?
 
 ### 3.
+Find me the part of this code that takes points off somebody when they miss a ping or turn one down. Show it to me and explain it in plain English. Then find me every single thing in this code that puts points back on.
+
+### 4.
+Somebody has been quiet for a month. Walk me through, step by step, exactly what would have to happen for them to start getting work again.
+Make it a simulation format with comprehensive visual

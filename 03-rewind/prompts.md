@@ -15,7 +15,9 @@ prompt library built from your own questions.
 ---
 
 ### 1.
+Compare the support_tickets table on rook-database against the pings table. Do they agree with each other? When do the numbers actually move?
 
 ### 2.
+Pick one responder from the pings table who went quiet. Show me every week since June: how many pings, and what they did with each. Use their name.
 
 ### 3.

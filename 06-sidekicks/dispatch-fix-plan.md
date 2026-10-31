@@ -33,10 +33,20 @@ The data doesn't tell us why it was these four. Handler interviews suggest they
 may be the responders who need longer to reach the phone (Aunt Dot: "phone to
 stairs"). Ask their handlers about this before assuming it.
 
-**Marcus's question (14 Aug):** yes, the 4.2 weights apply to everyone the same
-way, including responders who've been turning jobs down. That was never decided;
-it's simply how the code works. The ping wait is the bigger problem, not the
-weights.
+**Marcus's question (14 Aug):** the routing change wasn't aimed at responders
+who turn jobs down, and they aren't the ones who were hurt. It just happened.
+- 4.2 made recent acceptance count for *less*, not more (weight 0.40 → 0.25).
+- The four who went quiet weren't turning jobs down. Before 4.2 they turned
+  down 15–29% of pings, the same range as everyone else (13–28%). In the
+  release week they had 17 missed pings and 4 turned down.
+- What hurt them was a rule 4.2 didn't touch, a miss costing the same as a no,
+  combined with the shorter ping wait making misses about ten times as common.
+- Nothing in the code or changelog shows anyone intended this. Whether anyone
+  weighed the ping wait against "a miss counts as a no" is a question for Wen.
+
+Replaying the scoring rule over every ping picks out exactly these four.
+By 23 Aug they were at 0.04–0.28, and the next lowest responder was at 0.64.
+By 6 Sep all four were at 0.
 
 **This isn't seasonal.** The week before release had the best acceptance rate in
 the data (77.9%). It fell to 54.2% in the release week. We have no earlier
@@ -57,7 +67,7 @@ signs it off because it changes a committed roadmap item (Ping timeout tuning).
 | --- | --- | --- |
 | **Roll back** the ping wait from 60s to 90s | `config.py:9` | It's what set this off. Bring it back down later only if the data supports it. |
 | Count a missed ping as something different from a turned-down one, and give it a much smaller penalty | `offer.py:30`, `history.py`, `config.py` | Missing a ping isn't the same as refusing one. The glossary already says the two are recorded separately. |
-| One-off fix: set every responder's score back to its 11 Aug value (or to neutral, 0.5, if there's no snapshot) | data fix, run once | Gets the four stuck responders out of the loop straight away |
+| One-off fix: set every responder's score back to its 11 Aug value (or to neutral, 0.5, if there's no snapshot) | data fix, run once | Gets the four stuck responders out of the loop straight away. Replayed scores on 11 Aug were 0.80–1.00 for everyone. |
 | **Keep** the proximity weights (0.60 / 0.25 / 0.15) | `config.py:13-15` | Responders asked for this change, and the data doesn't blame it. Reverting it "trades one angry group for another" (Priya). |
 
 ```python
@@ -79,6 +89,23 @@ def record_missed(responder):
     """No answer in time. Counts against them, but much less than a no."""
     _set(responder, recent_acceptance(responder) - MISSED_PENALTY)
 ```
+
+**Checked against the real pings.** I replayed every ping since 29 Jun with a
+miss costing 0.03, keeping every miss exactly as it happened. A 90s wait would
+have prevented some of them, so this is the cautious case. Even so, none of the
+four would have dropped out of the pack:
+
+| Responder | Score after release week, current rule | Score after release week, with this fix |
+| --- | --- | --- |
+| The Undertow | 0.32 | 0.77 |
+| Farlight | 0.40 | 0.80 |
+| Meteor Mite | 0.56 | 0.92 |
+| Vesper | 0.68 | 0.98 |
+| Everyone else | 0.44–1.00 | 0.62–1.00 |
+
+Limits: the scores are rebuilt from the pings table, starting everyone at 0.5
+on 29 Jun. There's no location data, so this covers the acceptance part of the
+ranking only.
 
 ### 4.3 (the proper fix Helen asked for)
 
@@ -112,7 +139,8 @@ already in our system.
 
 | When | What | Owner |
 | --- | --- | --- |
-| This week | Call the six handlers whose responders went quiet: Linda Pruitt (Farlight), Desmond Okafor (The Undertow), Yusuf Demir (Corporal Ashgrove), Simone Fischer (Halfmoon), Kip (Meteor Mite) and Aunt Dot (Vesper). Explain what happened and when it'll be fixed. | PM + Nadia |
+| This week | Call the four handlers whose responders went quiet: Linda Pruitt (Farlight), Desmond Okafor (The Undertow), Kip (Meteor Mite) and Aunt Dot (Vesper). Explain what happened and when it'll be fixed. Confirm Kip and Aunt Dot really handle Meteor Mite and Vesper first; neither responder has a ticket, so the data can't confirm it. | PM + Nadia |
+| This week | Call Yusuf Demir (Corporal Ashgrove) and Simone Fischer (Halfmoon) separately. Their pings dropped by about a quarter (10–11 a week down to 7–8), but neither responder fell down the order; both scores ended at the top. Use the second script below, not the first. | PM + Nadia |
 | This week | Reply to all 45 open "not getting pinged" and "gone too fast" tickets, using the reply below | Nadia |
 | On 4.2.1 day | Send the release note below to all handlers | PM |
 | 4.2.1 + 2 weeks | Check that the four quiet responders are back to at least 80% of their pre-August ping volume. If not, escalate to Wen. | Ravi |
@@ -121,7 +149,7 @@ already in our system.
 
 ## 3. What we'd tell them
 
-**To the six affected handlers (call first, then send this in writing):**
+**To the four handlers whose responders went quiet (call first, then send this in writing):**
 
 > Since our 12 August update, [responder] has been getting far fewer callouts
 > than usual. That was our fault, not anything on your side or theirs. The
@@ -133,6 +161,17 @@ already in our system.
 > in the order. You don't need to change anything. We'll check [responder]'s
 > callouts for the next two weeks and tell you what we see. I'm sorry this went
 > on as long as it did, and that you had to keep asking.
+
+**To Yusuf Demir and Simone Fischer (call first, then send this in writing):**
+
+> You were right that [responder] has been getting fewer callouts since our
+> 12 August update: about a quarter fewer than before. The update also
+> shortened how long a callout waits on the phone, so some moved on before
+> [responder] could answer. Unlike a few other responders, [responder] wasn't
+> pushed down the order by this, and nothing on your side
+> or theirs caused this. On [date] we're putting the wait back to 90 seconds.
+> We'll keep an eye on [responder]'s callouts for the next two weeks and tell
+> you what we see. Sorry it took us this long to give you a proper answer.
 
 **4.2.1 release note (all handlers):**
 
