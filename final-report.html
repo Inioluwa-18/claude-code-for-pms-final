@@ -341,13 +341,13 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
   <div class="wrap">
     <span class="caption pop"><svg><use href="#i-bolt"/></svg>Dispatch final report</span>
     <h1 class="pop d1" style="max-width:19ch">Release 4.2 didn't push anyone out on purpose. <span style="color:var(--red)">Four responders went quiet anyway.</span></h1>
-    <p class="lede pop d2">The 4.2 release shortened the ping wait. That turned slow answers into misses, and the routing code counted every miss as a "no". Four responders sank to the bottom of the order, and nothing in the code could bring them back. Overall acceptance recovered, so nobody looking at the dashboard saw it happen.</p>
+    <p class="lede pop d2">The 4.2 release shortened the ping wait. That turned slow answers into misses, and the routing code counted every miss as a "no". Four responders sank to the bottom of the order, and nothing in the code could bring them back. Overall acceptance recovered, so nobody watching the weekly average saw it happen.</p>
     <div class="statrow">
       <div class="stat pop d1"><div class="ic"><svg class="i"><use href="#i-clock"/></svg></div><span class="big num" data-from="90" data-to="60" data-suf="s">60s</span><span class="l">ping wait, down from 90s</span></div>
       <div class="stat pop d2"><div class="ic"><svg class="i"><use href="#i-phoneoff"/></svg></div><span class="big num" data-to="21.5" data-dec="1" data-suf="%">21.5%</span><span class="l">of pings missed in the release week</span></div>
       <div class="stat pop d3"><div class="ic"><svg class="i"><use href="#i-minus"/></svg></div><span class="big num" data-to="-0.12" data-dec="2">−0.12</span><span class="l">for each miss, the same as a "no"</span></div>
       <div class="stat hot pop d4"><div class="ic"><svg class="i"><use href="#i-people"/></svg></div><span class="big num" data-to="4">4</span><span class="l">responders down to 0–1 pings a week</span></div>
-      <div class="stat pop d4"><div class="ic"><svg class="i"><use href="#i-pulse"/></svg></div><span class="big num" data-to="72.7" data-dec="1" data-suf="%">72.7%</span><span class="l">acceptance by 31 Aug, hiding the four</span></div>
+      <div class="stat pop d4"><div class="ic"><svg class="i"><use href="#i-pulse"/></svg></div><span class="big num" data-to="72.7" data-dec="1" data-suf="%">72.7%</span><span class="l">acceptance in the week of 31 Aug, hiding the four</span></div>
     </div>
     <div class="byline pop d4"><span>Inioluwa · Dispatch PM</span><span>7 Nov 2026</span><span>Data: <span class="num" data-to="1696">1,696</span> pings, 29 Jun – 6 Sep</span></div>
   </div>
@@ -395,7 +395,7 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
     <div class="chain">
       <div class="step pop d1"><div class="ic"><svg class="i"><use href="#i-clock"/></svg></div><span class="bang">Ping wait 90s → 60s</span><span>4.2 shipped 12 Aug</span></div>
       <svg class="arrow i" aria-hidden="true"><use href="#i-arrow"/></svg>
-      <div class="step pop d2"><div class="ic"><svg class="i"><use href="#i-phoneoff"/></svg></div><span class="bang">Misses 2% → 21.5%</span><span>Slow answers ran out of time</span></div>
+      <div class="step pop d2"><div class="ic"><svg class="i"><use href="#i-phoneoff"/></svg></div><span class="bang">Misses 1–3% → 21.5%</span><span>Slow answers ran out of time</span></div>
       <svg class="arrow i" aria-hidden="true"><use href="#i-arrow"/></svg>
       <div class="step pop d2"><div class="ic"><svg class="i"><use href="#i-minus"/></svg></div><span class="bang">Each miss cost −0.12</span><span>The same penalty as a "no"</span></div>
       <svg class="arrow i" aria-hidden="true"><use href="#i-arrow"/></svg>
@@ -413,7 +413,7 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
   <div class="wrap">
     <span class="caption pop"><svg><use href="#i-bolt"/></svg>The evidence</span>
     <h2 class="pop d1">The average recovered. The four didn't.</h2>
-    <p class="lede pop d1">Turned-down pings didn't rise. People weren't saying no; they weren't reaching the phone in time. The Gale and Nightwell picked up the pings the four stopped getting.</p>
+    <p class="lede pop d1">Turned-down pings barely moved: about 21% of pings before 4.2, 24% in the release week, then lower. People weren't saying no; they weren't reaching the phone in time. The Gale, Nightwell and others picked up the pings the four stopped getting.</p>
     <div class="grid g2" style="margin-top:1.2rem">
       <div class="panel pop d2">
         <h3>Share of pings each week</h3>
@@ -438,9 +438,9 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
     <div class="fs" id="fs">
       <svg class="fs-lines" id="fsLines" aria-hidden="true"></svg>
       <div class="fs-row">
-        <div class="src" data-i="0"><div class="hd"><div class="headic" style="background:var(--yellow)"><svg class="i" style="color:#111"><use href="#i-list"/></svg></div><span class="bang">The wiki</span></div><span class="k">90s → 60s</span><p>4.2 release notes: the ping wait was cut. On 14 Aug Marcus asked whether the routing change was meant to hit responders who turn jobs down. Nobody could answer.</p></div>
+        <div class="src" data-i="0"><div class="hd"><div class="headic" style="background:var(--yellow)"><svg class="i" style="color:#111"><use href="#i-list"/></svg></div><span class="bang">The wiki</span></div><span class="k">90s → 60s</span><p>4.2 release notes: the ping wait was cut. On 14 Aug Marcus asked whether the routing change was meant to hit responders who turn jobs down. Nobody answered then: the config doesn't tell the two apart, and Wen was away until 24 Aug.</p></div>
         <div class="src" data-i="1"><div class="hd"><div class="headic" style="background:#ffc98a"><svg class="i" style="color:#111"><use href="#i-ticket"/></svg></div><span class="bang">Tickets</span></div><span class="k">32 + 13</span><p>"Gone too fast" tickets from 12 Aug, then "phone went quiet" tickets from 17 Aug. All 45 still open.</p></div>
-        <div class="src" data-i="2"><div class="hd"><div class="headic" style="background:#a9ccff"><svg class="i" style="color:#111"><use href="#i-pulse"/></svg></div><span class="bang">Pings data</span></div><span class="k">2% → 21.5%</span><p>Missed pings jumped in the release week. Four responders fell to 0–1 pings a week, while acceptance recovered to 72.7%.</p></div>
+        <div class="src" data-i="2"><div class="hd"><div class="headic" style="background:#a9ccff"><svg class="i" style="color:#111"><use href="#i-pulse"/></svg></div><span class="bang">Pings data</span></div><span class="k">1–3% → 21.5%</span><p>Missed pings jumped in the release week. Four responders fell to 0–1 pings a week, while acceptance recovered to 72.7%.</p></div>
         <div class="src" data-i="3"><div class="hd"><div class="headic" style="background:#ff9aa4"><svg class="i" style="color:#111"><use href="#i-eye"/></svg></div><span class="bang">The code</span></div><span class="k">−0.12, no way back</span><p><code>offer.py</code> scores a miss as a "no". <code>history.py</code> has no recovery: only taking a ping adds points.</p></div>
       </div>
       <div class="root" id="fsRoot"><span class="tag">Root cause</span><span class="bang">A shorter ping wait, plus a miss scored as a "no", plus no way back up</span><p>Slow answers became misses, each miss cost as much as a refusal, and responders at the bottom stopped getting pings. Four of them went quiet.</p></div>
@@ -454,7 +454,7 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
   <div class="wrap">
     <span class="caption pop"><svg><use href="#i-bolt"/></svg>How I got here</span>
     <h2 class="pop d1">Six modules, one finding each, and the prompt behind it</h2>
-    <p class="lede pop d1">Each of the next six slides pairs one real finding or artifact with the exact prompt I wrote that produced it. The prompts are copied from each module's <code>prompts.md</code> as typed, typos included.</p>
+    <p class="lede pop d1">Each of the next six slides pairs one real finding or artifact with the exact prompt I wrote that produced it. The prompts are copied from each module's <code>prompts.md</code> as typed, typos included. CLAUDE.md doesn't record which prompt produced which finding, so each pairing is matched by topic.</p>
     <div class="grid g3" style="margin-top:1.4rem" id="pathCards"></div>
   </div>
 </section>
@@ -462,11 +462,11 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
 <!-- M1 -->
 <section class="slide" id="s-m1">
   <div class="wrap">
-    <div class="mod-head pop"><div class="mod-badge"><span class="bang">1</span><span class="ic"><svg class="i"><use href="#i-ticket"/></svg></span></div><div><div class="t">Module 1 · Origin story</div><h2>Ping problems are the biggest pile of tickets, and none of them are closed</h2></div></div>
+    <div class="mod-head pop"><div class="mod-badge"><span class="bang">1</span><span class="ic"><svg class="i"><use href="#i-ticket"/></svg></span></div><div><div class="t">Module 1 · Origin story</div><h2>45 tickets are about pings, and none of them are closed</h2></div></div>
     <div class="grid g2">
       <div class="side">
         <div class="bubble pop d1"><div class="who"><svg class="i"><use href="#i-chat"/></svg>Your prompt</div>What are the top most painpoints from customer's complaints in the order of priority?<span class="src">01-origin-story/prompts.md · prompt 2</span></div>
-        <div class="narr pop d2"><span class="bang">Finding</span>There were 147 tickets from 29 Jun to 7 Sep, falling into 8 groups. Ping problems were the biggest pile at 45 tickets: 32 say "phone went quiet" and 13 say "gone too fast". All 45 are still open. Every ticket filed before 4.2 is closed, but 83 of the 107 filed since are still open.</div>
+        <div class="narr pop d2"><span class="bang">Finding</span>There were 147 tickets from 29 Jun to 7 Sep, falling into 8 groups. 45 of them are ping problems: 32 say "phone went quiet" and 13 say "gone too fast". All 45 are still open. Every ticket filed before 4.2 is closed, but 83 of the 107 filed since are still open.</div>
       </div>
       <div class="panel pop d2">
         <div class="visual-top">
@@ -516,6 +516,7 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
           <text x="372" y="138" font-size="13" text-anchor="middle">Desmond Okafor</text>
           <text x="372" y="161" font-size="13" text-anchor="middle">Yusuf Demir</text>
           <text x="372" y="184" font-size="13" text-anchor="middle">Simone Fischer</text>
+          <text x="372" y="86" font-size="11" text-anchor="middle" opacity=".75">"phone went quiet" handlers</text>
           <text x="372" y="216" font-size="11" text-anchor="middle" opacity=".75">scale, urgency</text>
         </svg>
         <div class="visual-top" style="justify-content:center;margin:6px 0 0"><div class="burst" style="min-width:120px;min-height:120px"><div><span class="big sm num" data-to="1">1</span><small>person in both</small></div></div></div>
@@ -550,7 +551,7 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
     <div class="grid g2">
       <div class="side">
         <div class="bubble pop d1"><div class="who"><svg class="i"><use href="#i-chat"/></svg>Your prompt</div>Find me the part of this code that takes points off somebody when they miss a ping or turn one down. Show it to me and explain it in plain English. Then find me every single thing in this code that puts points back on.<span class="src">04-x-ray-vision/prompts.md · prompt 3</span></div>
-<pre class="code pop d2"><span class="c"># offer.py</span>
+<pre class="code pop d2"><span class="c"># offer.py  (point values added as comments)</span>
 <span class="k">if</span> answer == TAKEN:
     history.record_accepted(responder)   <span class="c"># +0.08</span>
     <span class="k">return</span> responder
@@ -659,7 +660,7 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
             <div class="narr narrline" id="pNarr"></div>
           </div>
         </div>
-        <p class="note">This is a simplified, built-in version of my prototype, using the brief's wording. The countdown runs 10× faster for the demo. The full prototype, with the 72-hour guard steps, is at <a href="05-super-speed/prototype.html" target="_blank" style="color:inherit;font-weight:800">05-super-speed/prototype.html ↗</a>.</p>
+        <p class="note">This is a simplified, built-in version of my prototype, using the wording from the brief and the prototype. The countdown runs 10× faster for the demo. The full prototype, with the 72-hour guard steps, is at <a href="05-super-speed/prototype.html" target="_blank" style="color:inherit;font-weight:800">05-super-speed/prototype.html ↗</a>.</p>
       </div>
       <div class="pop d2">
         <h3>What changes in 4.3</h3>
@@ -680,13 +681,13 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
   <div class="wrap">
     <span class="caption pop"><svg><use href="#i-bolt"/></svg>Keeping it from happening again</span>
     <h2 class="pop d1">Check the brief before it ships, and check the data after</h2>
-    <p class="lede pop d1">4.2 didn't fail on code alone. Nobody had written down how routing works, so nobody could answer Marcus's question on 14 Aug ("was this meant to apply to responders who turn jobs down?"). The only number anyone watched was an average.</p>
+    <p class="lede pop d1">4.2 didn't fail on code alone. Nobody had written down how routing works, so nobody could answer Marcus's question on 14 Aug: was the routing change meant to apply to responders who'd been turning jobs down, or did that just happen? The only number anyone watched was an average.</p>
     <div class="loop" style="margin-top:1.2rem">
       <div class="panel pop d1">
         <div class="headic" style="background:var(--yellow)"><svg class="i" style="color:#111"><use href="#i-list"/></svg></div>
         <span class="pill p-yellow">Before it ships</span>
         <h3 style="margin-top:8px">review-checklist</h3>
-        <div class="mini"><span class="n">1</span><div><b>Names who owns it</b>After Priya left, her name was still on every Q3 roadmap item and nobody owned the routing behaviour. The skill flags a missing owner, and an owner who has left.</div></div>
+        <div class="mini"><span class="n">1</span><div><b>Names who owns it</b>After Priya left, her name was still on every Q3 roadmap item, and there was no written description of how routing works. The skill flags a missing owner, and an owner who has left.</div></div>
         <div class="mini"><span class="n">2</span><div><b>Says how we'll know it worked</b>It asks for a baseline and a target. That pushes a brief toward per-responder measures, which would have shown the four, not just the 72.7% average.</div></div>
         <div class="mini"><span class="n">3</span><div><b>Same scope start to finish</b>4.2 changed two things at once: the routing weights and the ping wait. The skill names each extra change and where it first appears.</div></div>
         <div class="mini"><span class="n">4</span><div><b>Problem before the fix</b>It makes a brief state who is affected and what goes wrong for them before proposing a fix.</div></div>
@@ -697,15 +698,15 @@ footer{padding:40px 16px;text-align:center;font-weight:700;font-size:.82rem;bord
         <span class="pill p-blue">Every Monday</span>
         <h3 style="margin-top:8px">Scheduled review</h3>
         <p style="font-weight:600">"Monday brief review" runs review-checklist on every brief that changed that week and reports back. It only reads files. Weak briefs get caught on a routine, not by luck.</p>
-        <div class="burst" style="min-width:130px;min-height:130px;display:grid;margin:0 auto"><div><span class="big sm num" data-to="1">1</span><small>gap caught on the first run</small></div></div>
+        <div class="burst" style="min-width:130px;min-height:130px;display:grid;margin:0 auto"><div><span class="big sm num" data-to="2">2</span><small>gaps flagged on the first run</small></div></div>
       </div>
       <div class="join" aria-hidden="true"><svg viewBox="0 0 24 34"><path d="M14 1 3 19h7l-2 14 13-20h-8z"/></svg></div>
       <div class="panel pop d3">
         <div class="headic" style="background:#ff9aa4"><svg class="i" style="color:#111"><use href="#i-pulse"/></svg></div>
         <span class="pill p-red">After it ships</span>
         <h3 style="margin-top:8px">Weekly health check</h3>
-        <p style="font-weight:600">The skill checks the writing, not the code. The health check covers the gap: it reads the pings data and goes red if any responder's pings fall below half their usual.</p>
-        <p class="muted" style="font-size:.88rem;font-weight:600">It's drafted and backtested. It still needs to be scheduled, and Ravi, Wen and Nadia need to agree to own their metrics.</p>
+        <p style="font-weight:600">The skill checks the writing, not the code. The health check covers the gap: it reads the pings data and flags any responder whose pings fall below half their usual: amber for one, red for two or more, or the same one two weeks running.</p>
+        <p class="muted" style="font-size:.88rem;font-weight:600">It's drafted and backtested, with Ravi, Wen, Marcus and Nadia named as metric owners. It still needs to be scheduled.</p>
       </div>
     </div>
   </div>
