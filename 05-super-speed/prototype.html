@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en" data-theme="navy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meteor Mite prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<style>
+/* Theme tokens. Navy is the default; Coffee and Mono swap the same names. */
+:root, :root[data-theme="navy"]{
+  --page:#F4F6FA; --surface:#FFFFFF; --surface-2:#F0F3F8;
+  --ink:#0B1B33; --muted:#46546D; --faint:#64718A;
+  --line:#DCE2EC; --line-soft:#E9EDF3;
+  --accent:#1F4FD1; --accent-ink:#163C9F; --accent-soft:#E8EEFC; --on-accent:#FFFFFF;
+  --ok:#17663A; --ok-soft:#E4F3EA; --warn:#8A3B00; --warn-soft:#FCEEDD;
+  --new:#5638C2; --new-soft:#EEEAFB;
+  --bar:#A3AEC0; --bar-cur:#0B1B33; --post:#C2580A; --post-cur:#7F3A06;
+  --chrome:#0B1B33; --chrome-2:#172A4B; --chrome-line:#2A3D60; --chrome-ink:#FFFFFF; --chrome-muted:#B4C0D6;
+  --device:#0A1222; --ship:#17663A;
+  --shadow:0 1px 2px rgba(11,27,51,.06), 0 8px 24px rgba(11,27,51,.06);
+}
+:root[data-theme="coffee"]{
+  --page:#F6F1EA; --surface:#FFFDF9; --surface-2:#F2EBE0;
+  --ink:#2B1D14; --muted:#5A4739; --faint:#76614F;
+  --line:#E3D7C7; --line-soft:#EEE6DA;
+  --accent:#6F4325; --accent-ink:#55321A; --accent-soft:#F3E7D9; --on-accent:#FFFDF9;
+  --ok:#2E6A3E; --ok-soft:#E6F0E3; --warn:#8A3B00; --warn-soft:#FBEBDA;
+  --new:#6A3D8F; --new-soft:#F2E9F6;
+  --bar:#BDAA95; --bar-cur:#2B1D14; --post:#B5621C; --post-cur:#6B370C;
+  --chrome:#2B1D14; --chrome-2:#3D2A1D; --chrome-line:#55402F; --chrome-ink:#FFFDF9; --chrome-muted:#D7C6B2;
+  --device:#1D130C; --ship:#2E6A3E;
+  --shadow:0 1px 2px rgba(43,29,20,.06), 0 8px 24px rgba(43,29,20,.07);
+}
+:root[data-theme="mono"]{
+  --page:#F4F4F3; --surface:#FFFFFF; --surface-2:#EFEFEE;
+  --ink:#111111; --muted:#4A4A4A; --faint:#666666;
+  --line:#DADADA; --line-soft:#EAEAEA;
+  --accent:#111111; --accent-ink:#111111; --accent-soft:#ECECEC; --on-accent:#FFFFFF;
+  --ok:#1D5E36; --ok-soft:#E7F1EA; --warn:#7A3A00; --warn-soft:#F6ECE0;
+  --new:#3F3F3F; --new-soft:#E9E9E9;
+  --bar:#C7C7C7; --bar-cur:#777777; --post:#2E2E2E; --post-cur:#000000;
+  --chrome:#111111; --chrome-2:#222222; --chrome-line:#3A3A3A; --chrome-ink:#FFFFFF; --chrome-muted:#BDBDBD;
+  --device:#0A0A0A; --ship:#1D5E36;
+  --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);
+  font:15px/1.5 Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  font-feature-settings:"cv11","ss01";text-rendering:optimizeLegibility}
+button{font:inherit;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s}
+button:disabled{cursor:not-allowed;opacity:.45}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:13px/1 "JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--surface-2);padding:2px 6px;border-radius:6px}
+.wrap{max-width:1360px;margin:0 auto;padding:40px 16px 56px}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.02em;font-weight:700;margin:0 0 8px}
+.sub{color:var(--muted);margin:0;font-size:15px}
+
+/* prototype controls */
+.controls{margin-top:24px;background:var(--chrome);color:var(--chrome-ink);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.ctl-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--chrome-muted)}
+.seg{display:flex;background:var(--chrome-2);border:1px solid var(--chrome-line);border-radius:12px;padding:3px;gap:2px}
+.seg button{border:0;border-radius:9px;padding:8px 14px;min-height:40px;background:transparent;color:var(--chrome-ink);font-weight:500;font-size:14px}
+.seg button:hover{background:rgba(255,255,255,.06)}
+.seg button[aria-pressed="true"]{background:var(--chrome-ink);color:var(--chrome);font-weight:600}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;flex:1 1 600px}
+.steps button{border:1px solid var(--chrome-line);background:transparent;color:var(--chrome-ink);border-radius:12px;padding:10px 12px;text-align:left;min-height:56px;font-size:14px;font-weight:500}
+.steps button:hover{border-color:var(--chrome-muted)}
+.steps button[aria-current="step"]{background:var(--chrome-ink);color:var(--chrome);border-color:var(--chrome-ink);font-weight:600}
+.steps small{display:block;font-size:11px;opacity:.7;font-weight:600;letter-spacing:.02em}
+.narr{background:var(--chrome-2);border:1px solid var(--chrome-line);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.55}
+.ghost{border:1px solid var(--chrome-line);background:transparent;color:var(--chrome-ink);border-radius:10px;padding:8px 16px;min-height:40px;font-weight:600;font-size:14px}
+.ghost:hover{border-color:var(--chrome-muted)}
+.ghost.primary{background:var(--chrome-ink);color:var(--chrome);border-color:var(--chrome-ink)}
+.ghost.ship{background:var(--ship);border-color:var(--ship);color:#FFFFFF}
+.spacer{flex:1 1 auto}
+
+/* stage */
+.stage{margin-top:28px;display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start}
+.where{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+.where span{font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted);font-size:13px}
+
+/* phone */
+.phone-col{flex:0 0 352px;max-width:100%}
+.phone{background:var(--device);border-radius:48px;padding:11px;width:352px;max-width:100%;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06) inset, 0 30px 60px -20px rgba(0,0,0,.35), 0 12px 24px -12px rgba(0,0,0,.25)}
+.screen{background:var(--surface);border-radius:38px;min-height:640px;padding:26px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.app-head{display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:700;font-size:18px;letter-spacing:-.01em}
+.avail{border:0;border-radius:999px;padding:6px 14px;min-height:36px;font-size:13px;font-weight:600}
+.avail.on{background:var(--ok-soft);color:var(--ok)}
+.avail.off{background:var(--surface-2);color:var(--muted)}
+.ping{border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--surface);box-shadow:var(--shadow);border-top:3px solid var(--accent)}
+.ping.today{border-top-color:var(--ink)}
+.ping h3{margin:0;font-size:21px;letter-spacing:-.01em}
+.k{font-size:12px;font-weight:600;color:var(--accent-ink);letter-spacing:.02em}
+.today .k{color:var(--ink)}
+.bar{height:6px;border-radius:999px;background:var(--line-soft);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .1s linear}
+.timer{display:flex;justify-content:space-between;font-size:13px;font-weight:500;color:var(--muted)}
+.timer span:last-child{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.btns{display:flex;gap:8px}
+.btns button{flex:1;min-height:48px;border-radius:12px;font-weight:600;font-size:16px}
+.take{background:var(--accent);color:var(--on-accent);border:0}
+.take:hover{filter:brightness(1.08)}
+.decline{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.decline:hover{border-color:var(--faint)}
+.msg{border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.msg b{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--muted)}
+.msg p{margin:0;font-size:17px;line-height:1.45;font-weight:500;letter-spacing:-.005em}
+.tone-ok{background:var(--ok-soft)} .tone-info{background:var(--accent-soft)} .tone-plain{background:var(--surface-2)} .tone-warn{background:var(--warn-soft)}
+.empty{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:var(--muted);gap:4px;min-height:240px}
+.empty strong{color:var(--ink);font-weight:600}
+.phone-foot{margin-top:auto;border-top:1px solid var(--line-soft);padding-top:12px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.phone-foot b{color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* console */
+.console-col{flex:1 1 640px;min-width:0}
+.console{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.c-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--surface)}
+.c-top .brand{font-size:15px}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}
+.tabs span{padding:6px 12px;border-radius:8px;font-size:14px;color:var(--muted);font-weight:500}
+.tabs span[aria-current="page"]{background:var(--surface-2);color:var(--ink);font-weight:600}
+.who{font-size:13px;color:var(--muted)}
+.c-body{display:flex;flex-wrap:wrap;gap:20px;padding:20px;background:var(--page)}
+.cards{flex:999 1 420px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.cards h2{font-size:15px;font-weight:600;margin:0;color:var(--muted)}
+.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card-head b{font-size:17px;font-weight:650;letter-spacing:-.01em}
+.badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px}
+.badge.av{color:var(--ok);background:var(--ok-soft)} .badge.un{color:var(--muted);background:var(--surface-2)} .badge.ping{color:var(--accent-ink);background:var(--accent-soft)}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.stat small{display:block;font-size:12px;color:var(--faint);margin-bottom:2px}
+.stat strong{font-size:22px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat em{font-style:normal;font-weight:600;font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;background:var(--surface-2);color:var(--muted);border-radius:6px;padding:2px 8px;font-weight:500}
+.rot{border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:14px;line-height:1.5}
+.rot .lvl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.rot.tone-ok .lvl{color:var(--ok)} .rot.tone-info .lvl{color:var(--accent-ink)} .rot.tone-warn .lvl{color:var(--warn)} .rot.tone-plain .lvl{color:var(--muted)}
+.rot .facts{font-size:13px;color:var(--muted)}
+.ribbon{background:var(--ok);color:#FFFFFF;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;letter-spacing:.02em;align-self:flex-start}
+.prompt{border:1px solid var(--warn);border-left-width:4px;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.prompt .btns button{font-size:14px;min-height:44px}
+.none{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:14px;background:var(--surface)}
+.notes{flex:1 1 230px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.notes h2{font-size:15px;font-weight:600;margin:0;color:var(--muted)}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.45}
+.note time{display:block;font-size:12px;font-weight:600;color:var(--faint);margin-bottom:2px;font-variant-numeric:tabular-nums}
+.new{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--new);background:var(--new-soft);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+.foot{margin-top:24px;font-size:13px;color:var(--muted);max-width:900px;line-height:1.6}
+
+/* weekly bars */
+.trend{display:flex;flex-direction:column;gap:6px}
+.trend small{font-size:12px;color:var(--faint);display:flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--post)}
+.bars{display:flex;align-items:flex-end;gap:4px;height:60px;border-bottom:1px solid var(--line)}
+.bars i{flex:1;background:var(--bar);border-radius:3px 3px 0 0;min-height:2px}
+.bars i.cur{background:var(--bar-cur)}
+.bars i.later{background:var(--line-soft)}
+.bars i.post{background:var(--post)}
+.bars i.post.cur{background:var(--post-cur)}
+.axis{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+
+/* Eastgate split */
+.split{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.split table{border-collapse:collapse;width:100%;font-size:14px}
+.split th{font-size:12px;font-weight:600;color:var(--faint)}
+.split th,.split td{text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--line-soft)}
+.split tr:last-child td{border-bottom:0}
+.split td.n{font-variant-numeric:tabular-nums;font-weight:650}
+
+/* behind-the-scenes score */
+.score{border:1px dashed var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:13px;background:var(--surface-2)}
+.score .hd{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.score .val{display:flex;justify-content:space-between;align-items:baseline}
+.score .val strong{font-size:22px;font-weight:650;font-variant-numeric:tabular-nums}
+.score .bar>i{background:var(--ok)}
+
+@media (max-width:760px){
+  .wrap{padding-top:24px}
+  h1{font-size:24px}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card-grid{grid-template-columns:minmax(0,1fr)}
+  .phone-col,.phone{width:100%;flex-basis:100%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Meteor Mite comes back: prototype</h1>
+  <p class="sub">Built from <code>05-super-speed/brief.md</code>. Eastgate; real ping data for today, projected for the fix. Click the ping, the availability pill and the handler prompt; they all respond.</p>
+
+  <div class="controls" aria-label="Prototype controls">
+    <div class="row">
+      <span class="ctl-label">Version</span>
+      <div class="seg" role="group" aria-label="Version">
+        <button id="mToday" aria-pressed="true">Before (4.2)</button>
+        <button id="mFix" aria-pressed="false">After (4.3)</button>
+      </div>
+      <span class="ctl-label">Clock</span>
+      <div class="seg" role="group" aria-label="Clock speed">
+        <button id="s1" aria-pressed="false">Real time</button>
+        <button id="s10" aria-pressed="true">10× faster</button>
+      </div>
+      <button class="ghost ship" id="ship">Fix ships</button>
+      <button class="ghost primary" id="send">Send ping</button>
+      <button class="ghost" id="runOut">Let the ping run out</button>
+      <span class="spacer"></span>
+      <span class="ctl-label">Theme</span>
+      <div class="seg" role="group" aria-label="Theme">
+        <button data-theme-pick="navy" aria-pressed="true">Navy</button>
+        <button data-theme-pick="coffee" aria-pressed="false">Coffee</button>
+        <button data-theme-pick="mono" aria-pressed="false">Mono</button>
+      </div>
+    </div>
+    <div class="row"><div class="steps" id="steps"></div></div>
+    <div class="narr" id="narr" aria-live="polite"></div>
+  </div>
+
+  <div class="stage">
+    <section class="phone-col" aria-label="Meteor Mite's phone">
+      <p class="where">Where: Meteor Mite's phone <span>· Rook responder app</span></p>
+      <div class="phone"><div class="screen" id="phone"></div></div>
+    </section>
+    <section class="console-col" aria-label="Kip's console">
+      <p class="where">Where: Kip's desk <span>· Rook Dispatch console, Coverage view</span></p>
+      <div class="console">
+        <div class="c-top">
+          <span class="brand">Rook Dispatch</span>
+          <nav class="tabs" aria-label="Console sections"><span aria-current="page">Coverage</span><span>Incident feed</span><span>Responders</span></nav>
+          <span class="who">Signed in: Kip</span>
+        </div>
+        <div class="c-body">
+          <div class="cards">
+            <h2>Eastgate · your responders</h2>
+            <div class="card-grid">
+              <article class="card" id="mm"></article>
+              <article class="card" id="gale"></article>
+            </div>
+            <div class="split" id="split"></div>
+          </div>
+          <aside class="notes" aria-label="Notifications" id="notes"></aside>
+        </div>
+      </div>
+    </section>
+  </div>
+  <p class="foot"><strong>Before (4.2)</strong> uses real ping counts, times and outcomes for Meteor Mite and The Gale from rook.pings (29 Jun – 6 Sep); the weekly bars and the Eastgate first-ping split are real in both views. <strong>After (4.3)</strong> starts from the last real week, then is projected: the fix hasn't shipped and the data ends on 6 Sep. Capability tags and callout details (for example "about 9 min away") are stand-ins because the database doesn't hold them. Copy is draft for Sofia Marino.</p>
+</div>
+
+<script>
+(function(){
+  /* Meteor Mite's recent-acceptance score, replayed with the history.py rule over every ping since 29 Jun
+     (start 0.5, taken +0.08, turned down or missed -0.12, kept between 0 and 1): 1.00 at the end of 11 Aug, 0.00 from 5 Sep. */
+  var SCORE_11_AUG = 1.00;
+  var S = { shipped:false, score:0, anim:null, mode:'today', step:0, available:true, outcome:null, secs:0, total:90, timer:null, speed:10, prompt:null };
+
+  var LABELS = {
+    fix:   ['Fix ships','Ping arrives','Three missed in a row','72 quiet hours','First-in-line ping'],
+    today: ['Before 4.2 (week of 3 Aug)','13 Aug: ping arrives','Three missed in a row','Week of 24 Aug','Where the data ends']
+  };
+  var PING_STEPS = { fix:[1,4], today:[1] };
+
+  function hasPing(){ return PING_STEPS[S.mode].indexOf(S.step) > -1; }
+  function live(){ return S.timer !== null; }
+
+  function stop(){ if (S.timer){ clearInterval(S.timer); S.timer = null; } }
+  function startPing(){
+    stop();
+    if (!S.available) return;
+    S.total = S.mode === 'fix' ? 90 : 60;
+    S.secs = S.total;
+    S.timer = setInterval(function(){
+      S.secs -= 1;
+      if (S.secs <= 0){ resolve('missed'); } else { updateTimer(); }
+    }, 1000 / S.speed);
+  }
+  function resolve(o){
+    stop();
+    S.outcome = o;
+    if (S.mode === 'fix' && S.step === 4 && o === 'missed') S.prompt = 'ask';
+    render();
+  }
+  function setStep(i){
+    stop(); S.step = i; S.outcome = null; S.prompt = null;
+    if (i === 0){ S.shipped = false; S.score = 0; if (S.anim){ clearInterval(S.anim); S.anim = null; } }
+    render();
+  }
+  function ship(){
+    stop(); S.mode = 'fix'; S.step = 0; S.outcome = null; S.prompt = null; S.available = true;
+    S.shipped = true; S.score = 0;
+    if (S.anim) clearInterval(S.anim);
+    S.anim = setInterval(function(){
+      S.score = Math.min(SCORE_11_AUG, Math.round((S.score + 0.04) * 100) / 100);
+      if (S.score >= SCORE_11_AUG){ clearInterval(S.anim); S.anim = null; }
+      render();
+    }, 50);
+    render();
+  }
+  function setMode(m){ S.mode = m; S.available = true; setStep(0); }
+
+  /* Each tick touches only the countdown. Re-rendering the phone would replace the Accept and
+     Turn down buttons mid-click, and the click would be lost. */
+  function updateTimer(){
+    var t = document.getElementById('tleft'), b = document.getElementById('tbar'), p = document.getElementById('tprog');
+    if (t) t.textContent = fmt(S.secs) + ' left';
+    if (b) b.style.width = (100 * S.secs / S.total) + '%';
+    if (p) p.setAttribute('aria-valuenow', S.secs);
+  }
+  function fmt(s){ var m = Math.floor(s/60), r = s%60; return m + ':' + (r<10?'0':'') + r; }
+
+  /* ---------- what each surface shows ---------- */
+  function view(){
+    var v = { phone:null, week:'', last:'', rot:null, ribbon:false, gale:{week:'',note:''}, notes:[], narr:'' };
+    var f = S.mode === 'fix', o = S.outcome, sent = live() || !!o;
+    /* Wording exactly as in brief.md. */
+    var MISSED_MSG = { kind:'msg', tone:'plain', title:'Missed', text:'This one moved on. Missing a ping doesn\'t count against you like turning one down.' };
+
+    if (f){
+      switch (S.step){
+      case 0:
+        if (!S.shipped){
+          v.phone = { kind:'empty', title:'No live ping', text:'Available, but hardly anything comes.' };
+          v.week='1'; v.last='Missed · Sat 5 Sep 15:06';
+          v.cardNote = 'The fix hasn’t shipped yet. Nothing on the card explains the drop.';
+          v.gale = { week:'21', note:'Overloaded.' };
+          v.notes = [];
+          v.narr = 'The last week of real data: 1 ping for Meteor Mite, missed, and 21 for The Gale. Replaying the scoring rule, Meteor Mite’s score has been 0.00 since 5 Sep. Press Fix ships.';
+          break;
+        }
+        /* Wording exactly as in brief.md. */
+        v.phone = { kind:'msg', tone:'info', title:'From Rook', text:'Your place in the order is back. Since 12 August, pings you didn\'t reach in time counted against you like turning one down. That was our mistake, not yours.' };
+        v.week='1'; v.last='Missed · Sat 5 Sep 15:06'; v.ribbon=true;
+        v.rot = { tone:'ok', lvl:'Restored', text:'Meteor Mite’s place in the order was restored today, back to where it was on 11 Aug. Missed pings no longer count like a no.' };
+        v.gale = { week:'21', note:'Overloaded. Should ease as Meteor Mite comes back.' };
+        v.notes = [['Mon 09:00','Meteor Mite’s place in the order was restored. Inioluwa and Nadia Hoffmann called you about why.']];
+        v.narr = 'The fix ships. Meteor Mite’s score goes from 0.00 back to 1.00, its value at the end of 11 Aug (replayed from the pings). From step 2 on, numbers are projected. Meteor Mite is already quiet, so the fix starts with an explanation, not a silent change. Kip got a phone call first; now both screens say what happened. Try the availability pill on the phone: Kip’s card follows it.';
+        break;
+      case 1:
+        v.week='1'; v.last='Now'; v.gale={week:'19',note:'Still carrying extra load.'};
+        v.rot = { tone:'ok', lvl:'Usual place', text:'In the rotation as usual.' };
+        v.notes = [['Tue 14:02','Meteor Mite was pinged · Eastgate · structural-entry']];
+        v.narr = 'The ping wait is 90 seconds and the countdown is on the ping itself. Kip is told the moment Meteor Mite is pinged. Press Accept or Turn down, or let it run out.';
+        if (!sent){ v.last='Missed · Sat 5 Sep 15:06'; v.notes=[]; v.narr='Press Send ping. The ping wait is 90 seconds, with the countdown on the ping itself (10× faster for the demo). Then press Accept, or let it run out and watch Kip’s card.'; }
+        if (o==='taken'){ v.phone={kind:'msg',tone:'ok',title:'Taken',text:'You’re on this callout. Eastgate · structural-entry.'}; v.last='Taken · 14:02'; v.rot={tone:'ok',lvl:'Usual place',text:'Took the ping. Taking pings keeps Meteor Mite in their usual place.'}; v.notes.unshift(['Tue 14:02','Meteor Mite took the callout · Eastgate']); v.narr='Taken. Nothing else changes: this is the normal path.'; }
+        if (o==='declined'){ v.phone={kind:'msg',tone:'plain',title:'Turned down',text:'The callout went to the next responder. Your next ping comes as usual.'}; v.last='Turned down · 14:03'; v.rot={tone:'ok',lvl:'Usual place',text:'Turned down one ping. A no moves Meteor Mite down the order a little.'}; v.notes.unshift(['Tue 14:03','Meteor Mite turned down a ping; it went to The Gale']); v.narr='A turned-down ping still counts (−0.12). That part of the rule doesn’t change.'; }
+        if (o==='missed'){ v.phone=MISSED_MSG; v.last='Missed · 14:03'; v.rot={tone:'ok',lvl:'Usual place',text:'One ping missed. That only moves Meteor Mite down the order a little.'}; v.notes.unshift(['Tue 14:03','Meteor Mite’s ping was missed and moved on to The Gale']); v.narr='A missed ping is now recorded separately and costs 0.03, not 0.12. Meteor Mite is told it doesn’t count like a no.'; }
+        break;
+      case 2:
+        v.phone = MISSED_MSG; v.week='1'; v.last='Missed · Thu 09:41'; v.gale={week:'18',note:'Picking up some of Meteor Mite’s callouts.'};
+        v.rot = { tone:'warn', lvl:'Lower for now', text:'Three pings in a row went unanswered, so Meteor Mite is lower in the order for now. This fades over the next few weeks. If Meteor Mite goes 72 hours without a ping, they go first for the next matching callout.' };
+        v.notes = [['Thu 09:41','Meteor Mite missed 3 pings in a row and is lower in the order for now']];
+        v.narr = 'Kip can see why Meteor Mite is getting fewer pings, in plain words, without filing a ticket. Scores drift 5% a day back toward neutral (0.5).';
+        break;
+      case 3:
+        v.week='1'; v.last='3 days ago'; v.gale={week:'17',note:'Carrying extra load. Watch for overload.'};
+        if (S.available){
+          v.phone = { kind:'msg', tone:'info', title:'You’re in the rotation', text:'You’re available and in the rotation. Your next matching callout nearby comes to you first.' };
+          v.rot = { tone:'info', lvl:'First in line next', text:'Available for 72 hours with no ping, so Meteor Mite goes first for the next callout within reach that matches their tags.' };
+          v.notes = [['Sun 09:41','Meteor Mite hasn’t been pinged in 72 available hours, so they’re first for the next matching callout']];
+          v.narr = 'The 72-hour guard. It only counts hours Meteor Mite is available. Switch them to Unavailable on the phone to see the clock pause.';
+        } else {
+          v.phone = { kind:'empty', title:'You’re unavailable', text:'You won’t get pings until you switch back to Available.' };
+          v.rot = { tone:'plain', lvl:'Paused', text:'Meteor Mite is unavailable, so the 72-hour clock is paused. Nothing counts against them while they’re off.' };
+          v.notes = [['Sun 09:41','Meteor Mite was set to unavailable']];
+          v.narr = 'Unavailable time doesn’t count. This is how leave is handled until there’s a proper leave status (out of scope).';
+        }
+        break;
+      case 4:
+        v.week='2'; v.last='Now'; v.gale={week:'17',note:'Carrying extra load.'};
+        v.rot = { tone:'info', lvl:'First in line', text:'Pinged first for this callout because of 72 quiet hours. The guard fires once.' };
+        v.notes = [['Sun 16:20','Meteor Mite was pinged first after 72 quiet hours · Eastgate']];
+        v.narr = 'Meteor Mite gets the first ping. Accept it to see them come back, or let it run out to see what Kip is asked.';
+        if (!sent){ v.week='1'; v.last='3 days ago'; v.notes=[]; v.rot={tone:'info',lvl:'First in line next',text:'Available for 72 hours with no ping, so Meteor Mite goes first for the next callout within reach that matches their tags.'}; v.narr='Press Send ping: after 72 quiet hours, Meteor Mite gets the first ping.'; }
+        if (o==='taken'){ v.phone={kind:'msg',tone:'ok',title:'Taken',text:'You’re on this callout. Eastgate · structural-entry.'}; v.last='Taken · Sun 16:20'; v.rot={tone:'ok',lvl:'Back to usual',text:'Taking pings brings Meteor Mite back to their usual place in the order.'}; v.gale={week:'16',note:'Load easing as Meteor Mite comes back.'}; v.notes.unshift(['Sun 16:21','Meteor Mite took the callout · Eastgate']); v.narr='Back in the rotation. Success: pings per available hour back to 80% of the pre-4.2 level within two weeks (brief, Appendix A).'; }
+        if (o==='declined'){ v.phone={kind:'msg',tone:'plain',title:'Turned down',text:'The callout went to the next responder.'}; v.last='Turned down · Sun 16:21'; v.rot={tone:'ok',lvl:'Normal order',text:'Turned down the first-in-line ping. Back to the normal order; the guard doesn’t fire again for a no.'}; v.notes.unshift(['Sun 16:21','Meteor Mite turned down the first-in-line ping']); v.narr='A no is an answer, so the guard stands down.'; }
+        if (o==='missed'){
+          v.phone = MISSED_MSG; v.last='Missed · Sun 16:22';
+          v.notes.unshift(['Sun 16:22','Meteor Mite didn’t answer the first-in-line ping. Are they still available?']);
+          if (S.prompt==='ask'){ v.rot={tone:'warn',lvl:'Waiting on you',text:'The guard fired once and the ping was missed. It won’t fire again until you confirm.'}; v.narr='Each missed guard ping can delay a real callout by up to 90s, so the guard asks Kip instead of firing again. Answer the prompt on Meteor Mite’s card.'; }
+          if (S.prompt==='yes'){ v.rot={tone:'info',lvl:'Still available',text:'Kip confirmed Meteor Mite is available. The guard can fire again after 72 more available hours.'}; v.narr='Confirmed. The clock restarts.'; }
+          if (S.prompt==='no'){ v.rot={tone:'plain',lvl:'Paused',text:'Kip set Meteor Mite to unavailable. The 72-hour clock is paused.'}; v.narr='Kip caught a stale “available”, the leave case from tickets #3035 and #3143.'; }
+        }
+        break;
+      }
+      if (!S.available && S.step !== 3 && !(S.step===4 && S.prompt==='no')){
+        v.rot = { tone:'plain', lvl:'Paused', text:'Meteor Mite is unavailable, so the 72-hour clock is paused.' };
+      }
+    } else {
+      /* Every number on this path is from rook.pings (29 Jun – 6 Sep). Ping counts are full-week totals. */
+      v.notes = [];
+      switch (S.step){
+      case 0: v.phone={kind:'empty',title:'No live ping',text:'Took 8 of 11 pings this week.'}; v.week='11'; v.last='Taken · Sat 8 Aug 20:43'; v.gale={week:'13',note:''};
+        v.narr='Before 4.2, Meteor Mite got 10–12 pings a week and missed 0–1 of them. The Gale got 12–14.'; break;
+      case 1: v.week='10'; v.last='Turned down · Wed 12 Aug 19:04'; v.gale={week:'15',note:''};
+        v.narr='Thu 13 Aug, 13:43, the day after 4.2. The ping wait is now 60 seconds and there’s no countdown on the ping. Kip isn’t told. Let it run out: in the data, this one was missed and went to Nightwell.';
+        if (!sent){ v.narr='Thu 13 Aug, 13:43, the day after 4.2. Press Send ping. The ping wait is now 60 seconds, with no countdown, and Kip isn’t told.'; }
+        if (o==='taken'){ v.phone={kind:'msg',tone:'ok',title:'Taken',text:'You’re on this callout.'}; v.last='Taken · Thu 13 Aug 13:43'; v.narr='In the data this ping was missed. Across everyone, misses jumped from 1–3% to 21.5% of pings in the release week.'; }
+        if (o==='declined'){ v.phone={kind:'empty',title:'No live ping',text:''}; v.last='Turned down · Thu 13 Aug 13:43'; v.narr='Turned down: −0.12. In the data this ping was missed, which costs the same.'; }
+        if (o==='missed'){ v.phone={kind:'empty',title:'No live ping',text:'It disappeared before Meteor Mite could tap it.'}; v.last='Missed · Thu 13 Aug 13:43'; v.narr='A missed ping costs exactly as much as a no (−0.12), and nobody is told. Nightwell took the callout.'; }
+        break;
+      case 2: v.phone={kind:'empty',title:'No live ping',text:'Nothing new.'}; v.week='10'; v.last='Missed · Fri 14 Aug 07:26'; v.gale={week:'15',note:'Took 2 of the 3 callouts Meteor Mite missed.'};
+        v.narr='The real sequence: missed Thu 13 Aug 13:43 and 15:12, then Fri 14 Aug 07:26. That week Meteor Mite missed 4 of 10 pings, after missing 0–1 a week before. Each miss cost 0.12.'; break;
+      case 3: v.phone={kind:'empty',title:'No live ping',text:'Available, but hardly anything comes.'}; v.week='2'; v.last='Missed · Sat 29 Aug 09:15'; v.gale={week:'20',note:'Up from 12–14 a week.'};
+        v.narr='Meteor Mite fell from 10 pings to 4, then 2. The Gale rose to 20. The last ping Meteor Mite took was Wed 19 Aug. Only taking a ping raises the score, so it never recovers by itself.'; break;
+      case 4: v.phone={kind:'empty',title:'No live ping',text:'Still hardly anything.'}; v.week='1'; v.last='Missed · Sat 5 Sep 15:06'; v.gale={week:'21',note:'Kip, 4 Sep: “Gale’s exhausted.”'};
+        v.narr='The week of 31 Aug, the last full week in the data: 1 ping for Meteor Mite, missed, and 21 for The Gale. Kip’s only option is a “phone went quiet” ticket. 32 of those are open. We have no data after 6 Sep.'; break;
+      }
+    }
+    if (!v.phone && hasPing()){
+      v.phone = live() ? { kind:'ping' } : { kind:'empty', title:'No live ping', text:'Waiting for a ping. Press Send ping above.' };
+    }
+    if (!S.available && f && (!v.phone || v.phone.kind==='ping')) v.phone = { kind:'empty', title:'You’re unavailable', text:'You won’t get pings until you switch back to Available.' };
+    return v;
+  }
+
+  /* ---------- rendering ---------- */
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var NEW = '<span class="new">NEW</span>';
+
+  function renderSteps(){
+    var el = document.getElementById('steps');
+    el.innerHTML = LABELS[S.mode].map(function(l,i){
+      return '<button data-step="'+i+'"'+(i===S.step?' aria-current="step"':'')+'><small>Step '+(i+1)+'</small>'+esc(l)+'</button>';
+    }).join('');
+  }
+
+  function renderPhone(){
+    var v = view(), f = S.mode === 'fix', p = v.phone, h = '';
+    h += '<div class="app-head"><span class="brand">Rook</span>'
+      + '<button class="avail '+(S.available?'on':'off')+'" id="avail" aria-pressed="'+S.available+'"'+(live()?' disabled':'')+'>'+(S.available?'Available':'Unavailable')+'</button></div>';
+    if (p && p.kind==='ping'){
+      var guard = f && S.step===4;
+      h += '<div class="ping'+(f?'':' today')+'"><span class="k">'+(guard?'You’re first in line'+NEW:'New ping')+'</span>'
+        + '<h3>Callout · Eastgate</h3><div style="color:var(--muted);font-size:14px">Needs structural-entry · about 9 min away</div>';
+      if (f){
+        h += '<div class="timer"><span>Ping wait'+NEW+'</span><span id="tleft">'+fmt(S.secs)+' left</span></div>'
+          + '<div class="bar" id="tprog" role="progressbar" aria-label="Time left" aria-valuemin="0" aria-valuemax="'+S.total+'" aria-valuenow="'+S.secs+'"><i id="tbar" style="width:'+(100*S.secs/S.total)+'%"></i></div>';
+      }
+      h += '<div class="btns"><button class="take" id="take">Accept</button><button class="decline" id="decline">Turn down</button></div></div>';
+    } else if (p && p.kind==='msg'){
+      h += '<div class="msg tone-'+p.tone+'"><b>'+esc(p.title)+(f?NEW:'')+'</b><p>'+esc(p.text)+'</p></div>';
+    } else if (p && p.kind==='empty'){
+      h += '<div class="empty"><strong>'+esc(p.title)+'</strong><span>'+esc(p.text)+'</span></div>';
+    }
+    h += '<div class="phone-foot"><span>Pings this week</span><b>'+esc(v.week)+'</b></div>';
+    document.getElementById('phone').innerHTML = h;
+  }
+
+  /* Real weekly ping totals from rook.pings, weeks starting 29 Jun ... 31 Aug. 4.2 shipped in the week of 10 Aug (index 6). */
+  var WEEKS = ['29 Jun','6 Jul','13 Jul','20 Jul','27 Jul','3 Aug','10 Aug','17 Aug','24 Aug','31 Aug'];
+  var MM_WEEKLY = [11,12,10,11,12,11,10,4,2,1];
+  var GALE_WEEKLY = [13,12,13,14,13,13,15,17,20,21];
+  function weekIdx(){ return S.mode === 'today' ? [5,6,6,8,9][S.step] : 9; }
+  function trend(name, data){
+    var cur = weekIdx(), max = 21;
+    var bars = data.map(function(n,i){
+      var cls = (i >= 6 ? 'post' : '') + (i === cur ? ' cur' : '') + (i > cur ? ' later' : '');
+      return '<i class="'+cls+'" style="height:'+(i > cur ? 4 : Math.max(4, 100*n/max))+'%" title="Week of '+WEEKS[i]+': '+n+'"></i>';
+    }).join('');
+    var label = name + ' pings per week, ' + data.slice(0, cur+1).map(function(n,i){ return WEEKS[i]+': '+n; }).join(', ');
+    return '<div class="trend"><small>Pings per week · <span class="sw" aria-hidden="true"></span> since 4.2</small>'
+      + '<div class="bars" role="img" aria-label="'+esc(label)+'">'+bars+'</div>'
+      + '<div class="axis"><span>29 Jun</span><span>4.2 → 10 Aug</span><span>31 Aug</span></div></div>';
+  }
+
+  function renderConsole(){
+    var v = view(), f = S.mode === 'fix';
+    var status = live() ? '<span class="badge ping">On a ping</span>' : (S.available ? '<span class="badge av">Available</span>' : '<span class="badge un">Unavailable</span>');
+    var h = '<div class="card-head"><b>Meteor Mite</b>'+status+'</div>';
+    if (f && v.ribbon) h += '<div class="ribbon">Restored today'+'</div>';
+    var src = !f ? 'from ping data' : (S.step===0 ? 'latest data' : 'projected');
+    h += '<div class="stats"><div class="stat"><small>Pings '+(f?'this':'that')+' week · '+src+'</small><strong>'+esc(v.week)+'</strong></div>'
+      + '<div class="stat"><small>Usual before 4.2</small><strong>10–12</strong></div>'
+      + '<div class="stat"><small>Last ping</small><em>'+esc(v.last)+'</em></div>'
+      + '<div class="stat"><small>Area</small><em>Eastgate</em></div></div>'
+      + '<div class="tags"><span class="tag">structural-entry</span></div>'
+      + trend('Meteor Mite', MM_WEEKLY);
+    if (f && v.rot){
+      h += '<div class="rot tone-'+v.rot.tone+'"><span class="lvl">Rotation · '+esc(v.rot.lvl)+NEW+'</span>'
+        + '<span class="facts">Pings this week: '+esc(v.week)+' · usual 10–12 · last ping: '+esc(v.last)+'</span>'
+        + '<span>'+esc(v.rot.text)+'</span></div>';
+    } else if (!f){
+      h += '<div class="none">No explanation on the card. Kip sees the number, not the reason.</div>';
+    } else if (v.cardNote){
+      h += '<div class="none">'+esc(v.cardNote)+'</div>';
+    }
+    if (f && S.step === 0){
+      h += '<div class="score" aria-live="polite"><span class="hd">Behind the scenes · not shown to Kip</span>'
+        + '<div class="val"><span>Recent-acceptance score (0 to 1)</span><strong>'+S.score.toFixed(2)+'</strong></div>'
+        + '<div class="bar" role="progressbar" aria-label="Recent-acceptance score" aria-valuemin="0" aria-valuemax="1" aria-valuenow="'+S.score.toFixed(2)+'"><i style="width:'+(100*S.score)+'%"></i></div>'
+        + '<small style="color:var(--faint)">'+(S.shipped ? (S.score >= SCORE_11_AUG ? 'Restored to its 11 Aug value, 1.00.' : 'Restoring to its 11 Aug value…') : '0.00 since Sat 5 Sep, replayed from the pings.')+'</small></div>';
+    }
+    if (f && S.prompt==='ask'){
+      h += '<div class="prompt" role="alertdialog" aria-label="Confirm availability"><strong>Is Meteor Mite still available?'+NEW+'</strong>'
+        + '<span style="font-size:14px">They didn’t answer the first-in-line ping. If they’re away or on leave, set them unavailable so the clock pauses.</span>'
+        + '<div class="btns"><button class="take" id="pYes">Yes, still available</button><button class="decline" id="pNo">No, set unavailable</button></div></div>';
+    }
+    document.getElementById('mm').innerHTML = h;
+
+    document.getElementById('gale').innerHTML =
+      '<div class="card-head"><b>The Gale</b><span class="badge av">Available</span></div>'
+      + '<div class="stats"><div class="stat"><small>Pings '+(f?'this':'that')+' week · '+src+'</small><strong>'+esc(v.gale.week)+'</strong></div>'
+      + '<div class="stat"><small>Usual before 4.2</small><strong>12–14</strong></div></div>'
+      + '<div class="tags"><span class="tag">structural-entry</span></div>'
+      + trend('The Gale', GALE_WEEKLY)
+      + (v.gale.note ? '<div class="none">'+esc(v.gale.note)+'</div>' : '');
+
+    /* First ping per Eastgate callout, from rook.pings joined to rook.callouts. */
+    var s = '<h2 style="font-size:15px;margin:0">First pings in Eastgate</h2>'
+      + '<table><thead><tr><th scope="col">Period</th><th scope="col">The Gale</th><th scope="col">Meteor Mite</th></tr></thead><tbody>'
+      + '<tr><td>29 Jun – 11 Aug (before 4.2)</td><td class="n">55</td><td class="n">43</td></tr>'
+      + '<tr><td>12 Aug – 6 Sep (since 4.2)</td><td class="n">42</td><td class="n">6</td></tr></tbody></table>';
+    s += f
+      ? '<div class="rot tone-info"><span class="lvl">Why'+NEW+'</span><span>The rotation line on Meteor Mite’s card gives the reason for this split, so Kip doesn’t have to guess.</span></div>'
+      : '<div class="none">No explanation. Kip sees the split, not the reason.</div>';
+    document.getElementById('split').innerHTML = s;
+
+    var n = '<h2>Notifications'+(f?NEW:'')+'</h2>';
+    if (v.notes.length){
+      n += v.notes.map(function(x){ return '<div class="note"><time>'+esc(x[0])+'</time>'+esc(x[1])+'</div>'; }).join('');
+    } else {
+      n += '<div class="none">None. Kip isn’t told when Meteor Mite is pinged or misses one.</div>';
+    }
+    document.getElementById('notes').innerHTML = n;
+  }
+
+  function render(){
+    var v = view();
+    document.getElementById('mFix').setAttribute('aria-pressed', S.mode==='fix');
+    document.getElementById('mToday').setAttribute('aria-pressed', S.mode==='today');
+    document.getElementById('s1').setAttribute('aria-pressed', S.speed===1);
+    document.getElementById('s10').setAttribute('aria-pressed', S.speed===10);
+    document.getElementById('runOut').disabled = !live();
+    document.getElementById('send').disabled = live() || !S.available;
+    document.getElementById('narr').textContent = v.narr;
+    renderSteps(); renderPhone(); renderConsole();
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.step){ setStep(+t.dataset.step); return; }
+    if (t.dataset.themePick){ setTheme(t.dataset.themePick); return; }
+    switch (t.id){
+      case 'mFix': setMode('fix'); break;
+      case 'mToday': setMode('today'); break;
+      case 's1': S.speed=1; if (live()){ var s=S.secs; startPing(); S.secs=s; } render(); break;
+      case 's10': S.speed=10; if (live()){ var s2=S.secs; startPing(); S.secs=s2; } render(); break;
+      case 'ship': ship(); break;
+      case 'send':
+        if (!hasPing()){ S.step = 1; }
+        S.outcome = null; S.prompt = null;
+        startPing(); render(); break;
+      case 'runOut': if (live()) resolve('missed'); break;
+      case 'take': resolve('taken'); break;
+      case 'decline': resolve('declined'); break;
+      case 'avail':
+        S.available = !S.available;
+        render(); break;
+      case 'pYes': S.prompt='yes'; S.available=true; render(); break;
+      case 'pNo': S.prompt='no'; S.available=false; render(); break;
+    }
+  });
+
+  /* Theme is a per-viewer convenience; the page works without storage. */
+  function setTheme(name){
+    document.documentElement.setAttribute('data-theme', name);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-theme-pick]'), function(b){
+      b.setAttribute('aria-pressed', b.dataset.themePick === name);
+    });
+    try { localStorage.setItem('mm-proto-theme', name); } catch (e) {}
+  }
+  try { var saved = localStorage.getItem('mm-proto-theme'); if (saved) setTheme(saved); } catch (e) {}
+
+  setStep(0);
+})();
+</script>
+</body>
+</html>
